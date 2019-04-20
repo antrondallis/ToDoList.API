@@ -33,7 +33,8 @@ namespace ToDoList.API.BusinessLogic
             using (SqlConnection conn = new SqlConnection(_config["ConnectionStrings:DefaultConnection"]))
             {
                 string sql = @"select id, name, date
-                               from todolist";
+                               from todolist
+                               order by todolist.date ";
 
                 using (SqlCommand cmd = new SqlCommand(sql))
                 {
@@ -51,7 +52,7 @@ namespace ToDoList.API.BusinessLogic
                                     {
                                         Id = Convert.ToInt32(reader[0].ToString()),
                                         Name = Convert.ToString(reader[1].ToString().Trim()),
-                                        DateTime = Convert.ToString(reader[2].ToString().Trim())
+                                        Date = Convert.ToString(reader[2].ToString().Trim())
                                     });
                                 }
                             }
@@ -102,7 +103,7 @@ namespace ToDoList.API.BusinessLogic
                                     {
                                         Id = Convert.ToInt32(reader[0].ToString()),
                                         Name = Convert.ToString(reader[1].ToString().Trim()),
-                                        DateTime = Convert.ToString(reader[2].ToString().Trim())
+                                        Date = Convert.ToString(reader[2].ToString().Trim())
                                     };
                                 }
                             }
@@ -140,8 +141,7 @@ namespace ToDoList.API.BusinessLogic
                 {
                     cmd.Connection = conn;
                     cmd.Parameters.Add("@name", System.Data.SqlDbType.VarChar).Value = item.Name;
-                    cmd.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = DateTime.ParseExact(item.DateTime, "yyyyMMdd h:mm tt", CultureInfo.InvariantCulture);
-                    //cmd.Parameters.Add("@time", System.Data.SqlDbType.Time).Value = DateTime.ParseExact(item.Time, "HH:mm:ss t", CultureInfo.InvariantCulture);
+                    cmd.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = DateTime.ParseExact(item.Date, "yyyyMMdd h:mm tt", CultureInfo.InvariantCulture);
 
                     try
                     {
@@ -172,16 +172,15 @@ namespace ToDoList.API.BusinessLogic
             {
                 string sql = @"update todolist
                                set name = @name,
-                               date = @date,
-                               time = @time
+                               date = @date
                                where id = @id";
 
                 using (SqlCommand cmd = new SqlCommand(sql))
                 {
                     cmd.Connection = conn;
                     cmd.Parameters.Add("@id", System.Data.SqlDbType.Int).Value = item.Id;
-                    cmd.Parameters.Add("@name", System.Data.SqlDbType.Int).Value = item.Name;
-                    cmd.Parameters.Add("@date", System.Data.SqlDbType.Int).Value = item.DateTime;
+                    cmd.Parameters.Add("@name", System.Data.SqlDbType.VarChar).Value = item.Name;
+                    cmd.Parameters.Add("@date", System.Data.SqlDbType.Date).Value = DateTime.ParseExact(item.Date, "yyyyMMdd h:mm tt", CultureInfo.InvariantCulture);
 
                     try
                     {
